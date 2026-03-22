@@ -34,14 +34,26 @@ public class ProdutoController {
     }
 
     @GetMapping("/{id}")
-    public Optional<ProdutoModel> buscarPorId(@PathVariable Long id) {
-        return produtoService.buscarPorId(id);
+    public ResponseEntity<ProdutoModel> buscarPorId(@PathVariable Long id) {
+        Optional<ProdutoModel> request = produtoService.buscarPorId(id);
+
+        if(request.isPresent()) {
+            return ResponseEntity.ok(request.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletarProduto(@PathVariable Long id) {
-        produtoService.deletarProduto(id);
-        return ResponseEntity.noContent().build();
+        Optional<ProdutoModel> request = produtoService.buscarPorId(id);
+
+        if(request.isPresent()) {
+            produtoService.deletarProduto(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 }
